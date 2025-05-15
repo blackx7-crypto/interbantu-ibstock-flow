@@ -1,13 +1,22 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Layout = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const isMobile = useIsMobile();
+  
+  // Auto-collapse sidebar on mobile devices
+  useEffect(() => {
+    if (isMobile) {
+      setSidebarCollapsed(true);
+    }
+  }, [isMobile]);
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
@@ -29,12 +38,26 @@ const Layout = () => {
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background">
-      <Sidebar collapsed={sidebarCollapsed} />
+      <div 
+        className={`${
+          sidebarCollapsed ? "hidden md:block md:w-16" : "w-full md:w-64 fixed md:static z-50"
+        } transition-all duration-300 h-full`}
+      >
+        <Sidebar collapsed={sidebarCollapsed} />
+      </div>
       
-      <div className="flex flex-col flex-1 overflow-hidden">
+      {/* Overlay for mobile when sidebar is open */}
+      {!sidebarCollapsed && isMobile && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={toggleSidebar}
+        />
+      )}
+      
+      <div className="flex flex-col flex-1 overflow-hidden w-full">
         <Header toggleSidebar={toggleSidebar} sidebarCollapsed={sidebarCollapsed} />
         
-        <main className="flex-1 overflow-auto p-4 md:p-6 bg-background">
+        <main className="flex-1 overflow-auto p-3 md:p-6 bg-background">
           <Outlet />
         </main>
       </div>

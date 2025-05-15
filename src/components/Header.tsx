@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Bell, Menu, Search, Settings, User } from 'lucide-react';
+import { Bell, Menu, Search, User } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +11,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import Logo from './Logo';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -20,7 +22,8 @@ interface HeaderProps {
 
 const Header = ({ toggleSidebar, sidebarCollapsed }: HeaderProps) => {
   const { user, logout } = useAuth();
-
+  const isMobile = useIsMobile();
+  
   const roleLabel = () => {
     switch (user?.role) {
       case 'admin':
@@ -35,16 +38,19 @@ const Header = ({ toggleSidebar, sidebarCollapsed }: HeaderProps) => {
   };
 
   return (
-    <header className="h-16 bg-white dark:bg-card border-b border-border flex items-center justify-between px-4 sticky top-0 z-10">
-      <div className="flex items-center gap-4">
-        <button 
+    <header className="h-16 bg-white dark:bg-card border-b border-border flex items-center justify-between px-2 md:px-4 sticky top-0 z-10 shadow-sm">
+      <div className="flex items-center gap-2 md:gap-4">
+        <Button 
           onClick={toggleSidebar} 
-          className="text-muted-foreground hover:text-foreground transition-colors p-2 rounded-full hover:bg-secondary"
+          className="text-muted-foreground hover:text-foreground transition-colors p-1.5 rounded-full hover:bg-secondary"
+          variant="ghost"
+          size="icon"
         >
-          <Menu size={20} />
-        </button>
+          <Menu size={18} />
+          <span className="sr-only">Menu</span>
+        </Button>
         
-        <div className="hidden md:block">
+        <div className={`${isMobile && !sidebarCollapsed ? 'hidden' : 'flex'} items-center`}>
           <Logo size="sm" />
         </div>
       </div>
@@ -57,27 +63,24 @@ const Header = ({ toggleSidebar, sidebarCollapsed }: HeaderProps) => {
         />
       </div>
 
-      <div className="flex items-center gap-2 md:gap-4">
-        <button className="text-muted-foreground hover:text-foreground p-2 rounded-full hover:bg-secondary relative">
-          <Bell size={20} />
+      <div className="flex items-center gap-1 md:gap-3">
+        <Button className="text-muted-foreground relative" variant="ghost" size="icon">
+          <Bell size={18} />
           <span className="absolute top-1 right-1 h-2 w-2 bg-interbantu-orange rounded-full"></span>
-        </button>
+          <span className="sr-only">Notificações</span>
+        </Button>
         
-        <button className="text-muted-foreground hover:text-foreground p-2 rounded-full hover:bg-secondary">
-          <Settings size={20} />
-        </button>
-
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-2 focus:outline-none">
-            <div className="flex items-center gap-2 rounded-full hover:bg-secondary p-2">
+          <DropdownMenuTrigger className="focus:outline-none">
+            <div className="flex items-center gap-2 rounded-full hover:bg-secondary p-1.5 md:p-2">
               {user?.avatar ? (
                 <img 
                   src={user.avatar} 
                   alt={user.name} 
-                  className="h-8 w-8 rounded-full border border-border"
+                  className="h-7 w-7 md:h-8 md:w-8 rounded-full border border-border"
                 />
               ) : (
-                <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
+                <div className="h-7 w-7 md:h-8 md:w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
                   <User size={16} />
                 </div>
               )}
