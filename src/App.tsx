@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 
@@ -14,6 +14,7 @@ import POS from "@/pages/POS";
 import Inventory from "@/pages/Inventory";
 import Customers from "@/pages/Customers";
 import NotFound from "@/pages/NotFound";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,12 +37,36 @@ const App = () => (
               <Route path="/login" element={<LoginPage />} />
               
               <Route element={<Layout />}>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/pos" element={<POS />} />
-                <Route path="/inventory" element={<Inventory />} />
-                <Route path="/customers" element={<Customers />} />
-                {/* Add other routes here */}
+                {/* Redirect from root to appropriate page based on role */}
+                <Route path="/" element={<ProtectedRoute />} />
+                
+                {/* Dashboard is only for admin and supervisor */}
+                <Route path="/dashboard" element={
+                  <ProtectedRoute requiredRole="supervisor">
+                    <Dashboard />
+                  </ProtectedRoute>
+                } />
+                
+                {/* POS is for all authenticated users */}
+                <Route path="/pos" element={
+                  <ProtectedRoute>
+                    <POS />
+                  </ProtectedRoute>
+                } />
+                
+                {/* Inventory is for all authenticated users */}
+                <Route path="/inventory" element={
+                  <ProtectedRoute>
+                    <Inventory />
+                  </ProtectedRoute>
+                } />
+                
+                {/* Customers is for users who can sell */}
+                <Route path="/customers" element={
+                  <ProtectedRoute requiredRole="seller">
+                    <Customers />
+                  </ProtectedRoute>
+                } />
               </Route>
               
               <Route path="*" element={<NotFound />} />

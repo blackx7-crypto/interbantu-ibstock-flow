@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { LayoutDashboard, ShoppingCart, Package, Users, FileText, Clock, ChevronDown, LogOut } from 'lucide-react';
 import Logo from './Logo';
@@ -121,7 +121,9 @@ const Sidebar = ({ collapsed }: SidebarProps) => {
       </div>
 
       <div className="flex-1 overflow-y-auto py-4 px-2 flex flex-col">
+        {/* Principal Section */}
         <NavGroup title="Principal" collapsed={collapsed}>
+          {/* Dashboard - Only for supervisor and admin */}
           <NavItem
             to="/dashboard"
             icon={LayoutDashboard}
@@ -129,19 +131,21 @@ const Sidebar = ({ collapsed }: SidebarProps) => {
             collapsed={collapsed}
             hidden={!isSupervisor}
           />
+          {/* POS - For all roles */}
           <NavItem
             to="/pos"
             icon={ShoppingCart}
             label="Ponto de Venda"
             collapsed={collapsed}
-            hidden={!isSeller}
           />
+          {/* Inventory - For all roles */}
           <NavItem
             to="/inventory"
             icon={Package}
             label="Estoque"
             collapsed={collapsed}
           />
+          {/* Customers - For all roles that can sell */}
           <NavItem
             to="/customers"
             icon={Users}
@@ -151,6 +155,7 @@ const Sidebar = ({ collapsed }: SidebarProps) => {
           />
         </NavGroup>
 
+        {/* Reports Section - Only for supervisors and admin */}
         <NavGroup title="Relatórios" collapsed={collapsed} defaultOpen={false}>
           <NavItem
             to="/reports"

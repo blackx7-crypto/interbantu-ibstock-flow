@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,6 +9,7 @@ import { formatCurrency } from '@/utils/mockData';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Product category definition
 interface ProductCategory {
@@ -178,6 +178,7 @@ const customers = [
 type PaymentMethod = 'cash' | 'card' | 'mkesh' | 'kesh' | 'transfer';
 
 const POS = () => {
+  const { user } = useAuth();
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(productList);
@@ -318,8 +319,15 @@ const POS = () => {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-semibold">Ponto de Venda</h1>
+      <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
+        <div className="flex items-center">
+          <h1 className="text-2xl font-semibold">Ponto de Venda</h1>
+          {user && (
+            <Badge className="ml-3 bg-interbantu-orange text-white">
+              {user.name}
+            </Badge>
+          )}
+        </div>
         
         <div className="flex items-center gap-2">
           <Dialog>
@@ -381,15 +389,13 @@ const POS = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-full">
-        {/* Product selection area */}
-        <div className="md:col-span-2 flex flex-col">
-          <Card className="flex-1">
-            <CardHeader>
-              <CardTitle className="flex justify-between items-center">
-                <div>Produtos</div>
-                
-                <div className="relative w-full max-w-xs">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-full">
+        {/* Product selection area - 2/3 of the screen on large displays */}
+        <div className="lg:col-span-2 flex flex-col">
+          <Card className="flex-1 border-2 dark:border-slate-800">
+            <CardHeader className="pb-2">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div className="relative w-full md:max-w-xs">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                   <Input 
                     className="pl-10"
@@ -398,36 +404,36 @@ const POS = () => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </div>
-              </CardTitle>
-              
-              <div className="overflow-x-auto pb-1">
-                <Tabs defaultValue="all" value={activeCategory} onValueChange={setActiveCategory}>
-                  <TabsList className="border w-full justify-start overflow-x-auto">
-                    {productCategories.map((category) => (
-                      <TabsTrigger 
-                        key={category.id} 
-                        value={category.id}
-                        className="whitespace-nowrap"
-                      >
-                        {category.name}
-                      </TabsTrigger>
-                    ))}
-                  </TabsList>
-                </Tabs>
+                
+                <div className="overflow-x-auto pb-1 w-full md:w-auto flex-1">
+                  <Tabs defaultValue="all" value={activeCategory} onValueChange={setActiveCategory}>
+                    <TabsList className="w-full justify-start overflow-x-auto">
+                      {productCategories.map((category) => (
+                        <TabsTrigger 
+                          key={category.id} 
+                          value={category.id}
+                          className="whitespace-nowrap"
+                        >
+                          {category.name}
+                        </TabsTrigger>
+                      ))}
+                    </TabsList>
+                  </Tabs>
+                </div>
               </div>
             </CardHeader>
             
-            <CardContent className="overflow-y-auto max-h-[calc(100vh-350px)]">
+            <CardContent className="overflow-y-auto max-h-[calc(100vh-280px)] md:max-h-[calc(100vh-250px)]">
               {filteredProducts.length === 0 ? (
                 <div className="text-center py-10 text-muted-foreground">
                   Nenhum produto encontrado
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                   {filteredProducts.map((product) => (
                     <Card 
                       key={product.id} 
-                      className={`cursor-pointer transition-all hover:-translate-y-1 hover:shadow-md ${
+                      className={`cursor-pointer transition-all hover:-translate-y-1 hover:shadow-md border-2 ${
                         product.stock < 1 ? 'opacity-50 cursor-not-allowed' : ''
                       }`}
                       onClick={() => {
@@ -466,10 +472,10 @@ const POS = () => {
           </Card>
         </div>
 
-        {/* Cart area */}
+        {/* Cart area - 1/3 of the screen on large displays */}
         <div className="flex flex-col">
-          <Card className="flex-1 flex flex-col">
-            <CardHeader className="pb-2">
+          <Card className="flex-1 flex flex-col border-2 border-interbantu-orange/30 dark:border-interbantu-orange/20">
+            <CardHeader className="pb-2 bg-interbantu-orange/10 dark:bg-interbantu-orange/5">
               <CardTitle className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                   <ShoppingCart className="h-5 w-5" />
@@ -487,7 +493,7 @@ const POS = () => {
                 </Button>
               </CardTitle>
               {selectedCustomer && (
-                <div className="flex items-center gap-2 text-sm">
+                <div className="flex items-center gap-2 text-sm mt-2 p-2 rounded-md bg-background">
                   <Avatar className="h-6 w-6">
                     <AvatarImage src={selectedCustomer.avatar} alt={selectedCustomer.name} />
                     <AvatarFallback>{selectedCustomer.name.charAt(0)}</AvatarFallback>
@@ -514,7 +520,7 @@ const POS = () => {
                   {cart.map((item) => (
                     <div 
                       key={item.productId} 
-                      className="flex items-center justify-between p-2 rounded-md border border-border bg-background"
+                      className="flex items-center justify-between p-2 rounded-md border-2 border-border bg-background"
                     >
                       <div className="flex items-start gap-2">
                         {item.imageUrl ? (
@@ -581,7 +587,7 @@ const POS = () => {
                 
                 <div className="flex justify-between font-medium">
                   <span>Total</span>
-                  <span className="text-lg">{formatCurrency(cartTotal)}</span>
+                  <span className="text-lg text-interbantu-orange">{formatCurrency(cartTotal)}</span>
                 </div>
                 
                 <Dialog open={paymentDialogOpen} onOpenChange={setPaymentDialogOpen}>
@@ -668,7 +674,7 @@ const POS = () => {
                           </div>
                           
                           {parseFloat(amountPaid || '0') >= cartTotal && (
-                            <div className="flex justify-between items-center">
+                            <div className="flex justify-between items-center p-2 bg-muted/50 rounded-md">
                               <span>Troco:</span>
                               <span className="font-medium">{formatCurrency(getChangeAmount())}</span>
                             </div>
@@ -676,7 +682,7 @@ const POS = () => {
                         </>
                       )}
                       
-                      <div className="bg-muted p-4 rounded-lg">
+                      <div className="bg-interbantu-orange/10 p-4 rounded-lg border border-interbantu-orange/20">
                         <div className="flex justify-between items-center font-medium">
                           <span>Total a pagar:</span>
                           <span>{formatCurrency(cartTotal)}</span>
