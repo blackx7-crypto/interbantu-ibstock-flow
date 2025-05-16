@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Logo from './Logo';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ThemeToggle } from './ThemeToggle';
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -64,6 +65,8 @@ const Header = ({ toggleSidebar, sidebarCollapsed }: HeaderProps) => {
       </div>
 
       <div className="flex items-center gap-1 md:gap-3">
+        <ThemeToggle />
+        
         <Button className="text-muted-foreground relative" variant="ghost" size="icon">
           <Bell size={18} />
           <span className="absolute top-1 right-1 h-2 w-2 bg-interbantu-orange rounded-full"></span>

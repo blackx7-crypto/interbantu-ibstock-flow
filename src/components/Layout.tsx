@@ -15,6 +15,8 @@ const Layout = () => {
   useEffect(() => {
     if (isMobile) {
       setSidebarCollapsed(true);
+    } else {
+      setSidebarCollapsed(false);
     }
   }, [isMobile]);
 
@@ -25,7 +27,7 @@ const Layout = () => {
   // Show loading spinner while checking authentication
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen bg-background">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-interbantu-orange"></div>
       </div>
     );
@@ -38,9 +40,10 @@ const Layout = () => {
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background">
+      {/* Sidebar - visible based on state */}
       <div 
         className={`${
-          sidebarCollapsed ? "hidden md:block md:w-16" : "w-full md:w-64 fixed md:static z-50"
+          sidebarCollapsed ? "hidden md:block md:w-16" : "w-64 fixed md:static z-50"
         } transition-all duration-300 h-full`}
       >
         <Sidebar collapsed={sidebarCollapsed} />

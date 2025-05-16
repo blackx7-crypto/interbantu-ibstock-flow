@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Eye, EyeOff } from 'lucide-react';
 import Logo from '@/components/Logo';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -33,20 +34,21 @@ const LoginPage = () => {
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-interbantu-light to-white"
-      style={{
-        backgroundImage: 'radial-gradient(circle at 10% 20%, rgba(255, 200, 124, 0.1) 0%, rgba(252, 251, 247, 0.05) 99.9%)'
-      }}
+      className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-interbantu-light to-white dark:from-interbantu-dark dark:to-black/90"
     >
-      <Card className="w-full max-w-md glass-card">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+      
+      <Card className="w-full max-w-md glass-card dark:bg-card/80 dark:backdrop-blur-sm">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4">
             <Logo size="lg" />
           </div>
-          <CardTitle className="text-2xl font-semibold text-interbantu-burgundy">
+          <CardTitle className="text-2xl font-semibold text-interbantu-burgundy dark:text-interbantu-orange">
             IBSTOCK
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="dark:text-gray-400">
             Sistema de Gestão de Mercearias
           </CardDescription>
         </CardHeader>
