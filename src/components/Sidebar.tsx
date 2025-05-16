@@ -127,6 +127,7 @@ const Sidebar = ({ collapsed }: SidebarProps) => {
             icon={LayoutDashboard}
             label="Dashboard"
             collapsed={collapsed}
+            hidden={!isSupervisor}
           />
           <NavItem
             to="/pos"
